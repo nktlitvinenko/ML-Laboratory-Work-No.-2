@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  mini-rag:
+    build:
+      context: .
+    container_name: mini-rag
+    ports:
+      - "8112:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@pgvector-db:5433/postgres
+      - LLM_MODEL_NAME=llama3.2
+      - LLM_URL=http://ollama:11434
+    depends_on:
+      - pgvector-db
+    restart: unless-stopped
+
+  pgvector-db:
+    image: ankane/pgvector
+    container_name: pgvector-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    tty: true
+    command: >
+      bash -c "ollama pull llama3.2 && ollama serve"
+
+volumes:
+  pgvector_data:
+  ollama_data:
