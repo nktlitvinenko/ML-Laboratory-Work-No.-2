@@ -8,7 +8,7 @@ services:
     ports:
       - "8112:8000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@pgvector-db:5433/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@pgvector-db:5432/postgres
       - LLM_MODEL_NAME=llama3.2
       - LLM_URL=http://ollama:11434
     depends_on:
